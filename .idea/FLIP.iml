@@ -12,5 +12,7 @@
     <orderEntry type="library" name="browse" level="application" />
     <orderEntry type="library" name="page-flip" level="application" />
     <orderEntry type="library" name="bootswatch" level="application" />
+    <orderEntry type="library" name="firebase-app" level="application" />
+    <orderEntry type="library" name="firebase-firestore" level="application" />
   </component>
 </module>

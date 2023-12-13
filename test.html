@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Page Flip Demo</title>
+    <style>
+        /* CSS for the book and page elements */
+        .book {
+            width: 400px;
+            height: 300px;
+            position: relative;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        .page {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/page-flip@0.4.3/dist/js/page-flip.browser.min.js"></script>
+</head>
+<body>
+<!-- Container for the list of books -->
+<div id="books-list"></div>
+
+<script>
+    // Function to make HTTP request
+    function getStories() {
+        fetch('https://us-central1-mwalim-57e1f.cloudfunctions.net/stories-getStoriesWithTopAddStories')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Map through the list of stories
+                data.forEach((story, index) => {
+                    const bookElement = document.createElement('div');
+                    bookElement.classList.add('book');
+                    bookElement.id = `book${index}`;
+
+                    // Create a page for each addStory
+                    story.topAddStories.forEach(addStory => {
+                        const pageElement = document.createElement('div');
+                        pageElement.classList.add('page');
+                        pageElement.textContent = addStory.description; // Replace with actual content
+                        bookElement.appendChild(pageElement);
+                    });
+
+                    document.getElementById('books-list').appendChild(bookElement);
+
+                    // Initialize PageFlip for the book
+                    const pageFlip = new window.PageFlip(bookElement, {
+                        width: 550, // base page width
+                        height: 733, // base page height
+
+                        size: "stretch",
+                        // set threshold values:
+                        minWidth: 315,
+                        maxWidth: 1000,
+                        minHeight: 420,
+                        maxHeight: 1350,
+
+                        maxShadowOpacity: 0.5, // Half shadow intensity
+                        showCover: true,
+                        mobileScrollSupport: false // disable content scrolling on mobile devices
+                    });
+
+                    pageFlip.loadFromHTML(bookElement.querySelectorAll('.page'));
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    // Initial function call to fetch stories
+    getStories();
+</script>
+</body>
+</html>
